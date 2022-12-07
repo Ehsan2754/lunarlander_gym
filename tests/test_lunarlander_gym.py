@@ -3,11 +3,6 @@
 """Tests for `lunarlander_gym` package."""
 
 import pytest
-
-
-from lunarlander_gym import lunarlander_gym
-
-
 @pytest.fixture
 def response():
     """Sample pytest fixture.
