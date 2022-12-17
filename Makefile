@@ -38,7 +38,7 @@ clean-build: ## remove build artifacts
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -rf {} +
 	find . -name '*.pyo' -exec rm -rf {} +
-	find . -name '*~' -exec rm -rf {} +
+	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
 clean-test: ## remove test and coverage artifacts

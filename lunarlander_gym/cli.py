@@ -4,6 +4,7 @@ import sys
 import gymnasium as gym
 import numpy as np
 import logging
+from agents import BaseAgent
 def main():
     """Console script for lunarlander_gym."""
     parser = argparse.ArgumentParser()
@@ -23,8 +24,10 @@ def main():
     args = parser.parse_args()
     env = gym.make("LunarLander-v2", render_mode="human")
     observation, info = env.reset(seed=42)
-    
-    
+
+    agent = BaseAgent(env)
+    print(agent)
+
     if args.method > 3 or args.method < 0: 
         raise ValueError(f"input value {args.method} is an invalud method")
     if args.method == 0:
