@@ -8,6 +8,20 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 import numpy as np
 
+class PolicyGradientModule(nn.Module):
+    """
+    Policy Gradient Module
+    """
+    def __init__(self):
+        super(PolicyGradientModule, self).__init__()
+        self.state_layer = nn.Linear(8,128)
+        self.action_layer = nn.Linear(128,4)
+    
+    def forward(self, observation):
+        out = F.relu(self.state_layer(observation))
+        out = F.softmax(self.action_layer(out),dim=-1)
+        return out
+
 
 class ActorCriticModule(nn.Module):
     def __init__(self):
@@ -50,9 +64,9 @@ class ActorCriticModule(nn.Module):
             self.action_porbs, self.state_values, rewards
         ):
             advantage = reward - value.item()
-            action_loss = -action_prob * advantage
-            value_loss = F.smooth_l1_loss(value, reward)
-            loss += action_loss + value_loss
+            actor_loss = -action_prob * advantage
+            critic_loss = F.smooth_l1_loss(value, reward)
+            loss += actor_loss + critic_loss
         return loss
 
     def reset(self):

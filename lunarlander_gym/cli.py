@@ -4,7 +4,9 @@ import sys
 import gymnasium as gym
 import numpy as np
 import logging
+# from lunarlander_gym.agents import *
 from agents import *
+
 def main():
     """Console script for lunarlander_gym."""
     parser = argparse.ArgumentParser()
@@ -14,7 +16,7 @@ def main():
         help="""Specifies the Reinforcement Agent method {
         0 -> Random,
         1 -> Gradient based optimization,
-        2 -> Value estimation,
+        2 -> Q-Learning Agent
         3 -> Actor-critic
         }""",
         type=int,
@@ -31,7 +33,12 @@ def main():
         print(agent)
         agent.test()
     elif args.method == 1:
-        raise NotImplemented(f'Method {args.method} is not supported')
+        agent = VanillaPolicyGradientAgent(render=False)
+        print(agent)
+        agent.train(episode=10_000,save_every=1000)
+        # agent = ActorCriticAgent(rendergif=True)
+        # print(agent)
+        # agent.test(model='./output/ActorCriticAgent/train_outputs/trainActorCriticAgentEpisode=3000Reward=284.60.pth')
     elif args.method == 2:
         # agent = QLearningAget(render=False)
         # print(agent)
