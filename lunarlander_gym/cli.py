@@ -22,24 +22,23 @@ def main():
         required=True,
     )
     args = parser.parse_args()
-    env = gym.make("LunarLander-v2", render_mode="human")
-    observation, info = env.reset(seed=42)
 
-    agent = BaseAgent(env)
-    print(agent)
 
     if args.method > 3 or args.method < 0: 
         raise ValueError(f"input value {args.method} is an invalud method")
     if args.method == 0:
-        logging.info(f'Random agent selected method {args.method}')
-        policy = lambda x: env.action_space.sample()
+        agent = RandomAgent(rendergif=True)
+        agent.test()
     elif args.method == 1:
         raise NotImplemented(f'Method {args.method} is not supported')
     elif args.method == 2:
         raise NotImplemented(f'Method {args.method} is not supported')
     elif args.method == 3:
-        agent = ActorCriticAgent()
-        agent.train(1000,100,100)
+        # agent = ActorCriticAgent(render=False)
+        # print(agent)
+        # agent.train(episode=2000)
+        agent = ActorCriticAgent(rendergif=True)
+        agent.test(model='./output/ActorCriticAgent/train_outputs/trainActorCriticAgentEpisode=2000Reward=267857.73.pth')
 
         
     return 0
