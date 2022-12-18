@@ -33,10 +33,10 @@ def main():
     elif args.method == 1:
         raise NotImplemented(f'Method {args.method} is not supported')
     elif args.method == 2:
-        agent = QLearningAget(render=False)
+        # agent = QLearningAget(render=False)
         # print(agent)
         # agent.train(episode=3000,save_every=250)
-        # agent = QLearningAget(rendergif=True)
+        agent = QLearningAget(rendergif=True)
         print(agent)
         agent.test(model='./output/QLearningAget/train_outputs/trainQLearningAgetEpisode=3000Reward=184.91.pth')
 
