@@ -20,7 +20,7 @@ lunarlander_gym
 
 
 
-This project is implementation of multiple AI agents based on different Reinforcement Learning methods  to OpenAI Gymnasium Lunar-Lander environment which is classic rocket trajectory optimization problem.
+This project is implementation of multiple AI agents based on different Reinforcement Learning methods  to OpenAI Gymnasium Lunar-Lander environment which is classic rocket landing trajectory optimization problem.
 
 
 * Free software: MIT license
@@ -30,11 +30,9 @@ This project is implementation of multiple AI agents based on different Reinforc
 Features
 --------
 
-* TODO
+
 
 Credits
 -------
 
 
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter

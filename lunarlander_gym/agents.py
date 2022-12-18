@@ -2,12 +2,16 @@
 lunarlander_gym Agents
 """
 import gymnasium as gym
+import matplotlib.pyplot as plt
+from matplotlib import animation
+import os
+from collections import defaultdict
+import json
+
 import torch
 import torch.optim as optim
 import numpy as np
-from matplotlib import animation
-import matplotlib.pyplot as plt
-import os
+import random
 from models import *
 import logging
 
@@ -35,6 +39,7 @@ class BaseAgent:
         seed: int
             random seed
         """
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.name = name
         self.env = (
             gym.make("LunarLander-v2", render_mode="rgb_array")
@@ -57,6 +62,7 @@ class BaseAgent:
 
         self.seed = seed
         np.random.seed(seed)
+        random.seed(seed)
         torch.manual_seed(self.seed)
 
     def __str__(self) -> str:
@@ -113,7 +119,6 @@ class BaseAgent:
         raise NotImplementedError
 
     def saveFramesToGif(self, frames, path="./", filename="result.gif"):
-        plt.title(filename[:-4])
         print('\t',filename[:-4])
         plt.figure(
             figsize=(frames[0].shape[1] / 72.0, frames[0].shape[0] / 72.0), dpi=72
@@ -130,12 +135,10 @@ class BaseAgent:
         anim.save(os.path.join(path, filename), writer="imagemagick", fps=60)
 
 
-"""
-Random Agent
-"""
-
-
 class RandomAgent(BaseAgent):
+    """
+    Random Agent
+    """
     def __init__(
         self,
         render=True,
@@ -144,6 +147,7 @@ class RandomAgent(BaseAgent):
         name="RandomAgent",
         seed=543,
     ):
+        
         super().__init__(render, rendergif, path, name, seed)
 
     def choose_action(self):
@@ -164,10 +168,14 @@ class RandomAgent(BaseAgent):
             maximum number of frames to test the agent in each episode
         render_every: int
             render the environment every @param render_every episodes"""
-
+        if episode <= 10 or render_every <= 0:
+            raise ValueError("render_every and episode must be postive integers >=10")
+        if render_every > episode:
+            raise ValueError("render_every must be less than episodes")
         observation, info = self.env.reset(seed=self.seed)
-        cur_reward = 0
+        log_rewards = []
         for e in range(1,episode+1):
+            cur_reward = 0
             observation, info = self.env.reset(seed=self.seed)
             done = False
             frame = 0
@@ -187,19 +195,24 @@ class RandomAgent(BaseAgent):
                         frames.append(self.env.render())
                     else:
                         self.env.render()
+            log_rewards.append(cur_reward)
+            print(f"Test{self.name}\tEpisode={e}\tReward={cur_reward:.2f}")
+
             if self.rendergif and not (e % render_every):
                 self.saveFramesToGif(
                     frames,
                     self.test_path,
                     f"Test{self.name}Episodes{e}Reward={cur_reward:.2f}.gif",
                 )
+        fig,ax = plt.subplots()
+        ax.set_title(f"Reward results of training {self.name} for {episode} episodes")
+        ax.set_xlabel("Episodes")
+        ax.set_ylabel(f"Reward(mean last 10 episodes={np.mean(np.ndarray(log_rewards[-10:])):.2f})")
+        ax.plot(log_rewards)
+        plt.savefig(os.path.join(self.train_path, "rewardlogs.png"))
+        print(f"reward logs saved to {os.path.join(self.train_path,'rewardlogs.png')}")
 
-            print(f"Test{self.name}\tEpisode={e}\tReward={cur_reward:.2f}")
 
-
-"""        
-Policy Gradient Agent
-"""
 
 
 class PolicyGradientAgent(BaseAgent):
@@ -219,6 +232,8 @@ class PolicyGradientAgent(BaseAgent):
         self.reward_decay = reward_decay
 
         self.memory = []
+
+
 
 
 class ActorCriticAgent(BaseAgent):
@@ -282,15 +297,15 @@ class ActorCriticAgent(BaseAgent):
         max_frames: int
             maximum number of frames to train the agent in each episode
         """
-        if episode <= 0 or render_every <= 0:
-            raise ValueError("render_every and episode must be postive integers")
+        if episode <= 10 or render_every <= 0:
+            raise ValueError("render_every and episode must be postive integers >=10")
         if render_every > episode:
             raise ValueError("render_every must be less than episodes")
 
         self.reset()
         log_rewards = []
-        cur_reward = 0
         for e in range(1,episode+1):
+            cur_reward = 0
             observation, info = self.env.reset(seed=self.seed)
 
             done = False
@@ -335,7 +350,7 @@ class ActorCriticAgent(BaseAgent):
         fig,ax = plt.subplots()
         ax.set_title(f"Reward results of training {self.name} for {episode} episodes")
         ax.set_xlabel("Episodes")
-        ax.set_ylabel("Reward")
+        ax.set_ylabel(f"Reward(mean last 10 episodes={np.mean(np.ndarray(log_rewards[-10:])):.2f})")
         ax.plot(log_rewards)
         plt.savefig(os.path.join(self.train_path, "rewardlogs.png"))
         print(f"reward logs saved to {os.path.join(self.train_path,'rewardlogs.png')}")
@@ -372,8 +387,9 @@ class ActorCriticAgent(BaseAgent):
             self.policy.load_state_dict(torch.load(os.path.join(model)))
 
         observation, info = self.env.reset(seed=self.seed)
-        cur_reward = 0
+        log_rewards = []
         for e in range(1,episode+1):
+            cur_reward = 0
             observation, info = self.env.reset(seed=self.seed)
             done = False
             frames = []
@@ -400,4 +416,272 @@ class ActorCriticAgent(BaseAgent):
                     self.test_path,
                     f"Test{self.name}Episodes{e}Reward={cur_reward:.2f}.gif",
                 )
+            log_rewards.append(cur_reward)
             print(f"Test{self.name}\tEpisode={e}\tReward={cur_reward:.2f}")
+        fig,ax = plt.subplots()
+        ax.set_title(f"Reward results of testing {self.name} for {episode} episodes")
+        ax.set_xlabel("Episodes")
+        ax.set_ylabel(f"Reward(mean last 10 episodes={np.mean(np.ndarray(log_rewards[-10:])):.2f})")
+        ax.plot(log_rewards)
+        plt.savefig(os.path.join(self.train_path, "rewardlogs.png"))
+        print(f"reward logs saved to {os.path.join(self.train_path,'rewardlogs.png')}")
+
+
+class QLearningAget(BaseAgent):
+    """
+    Q-Learning Agent
+    """
+    def __init__(
+        self,
+        render=True,
+        rendergif=False,
+        path="./output",
+        name="QLearningAget",
+        lr=0.2e-1,
+        gamma=9.9e-1,
+        epsilon_decay=1e-2,
+        seed=543
+    ):
+        super().__init__(render, rendergif, path, name, seed)
+        self.qStates = defaultdict(float)
+        self.eps = 1.0
+        self.lr = lr 
+        self.gamma = gamma
+        self.epsilon_decay = epsilon_decay
+        self._decayEpsilon = lambda eps1,eps2: eps1 if eps1<eps2 else eps1*.996
+        
+
+    def train(self,episode=10_000, save_every=500, render_every=1000, max_frames=0):
+        """
+        Learn the environment by agent
+        Parameters:
+        -----------
+        epsilon: float
+            epsilon value for epsilon-greedy exploration
+        episode: int
+            number of episodes
+        save_every: bool |int
+            saves the model weights every @param save_every episodes
+        render_every: int
+            render the environment every @param render_every episodes
+        max_frames: int
+            maximum number of frames to train the agent in each episode
+        """
+        if episode <= 10 or render_every <= 0:
+            raise ValueError("render_every and episode must be postive integers >=10")
+        if render_every > episode:
+            raise ValueError("render_every must be less than episodes")
+        
+        self.reset()
+        log_rewards = []
+        for e in range(1,episode+1):
+            observation, info = self.env.reset(seed=self.seed)
+            observation = self._discretState(observation)
+
+            cur_reward = 0
+            done = False
+            frames = []
+            frame = 0
+
+            while not done:
+                frame += 1
+
+                action = self.choose_action(observation)
+                qState = str([observation,action])
+
+                next_observation, reward, terminated, truncated, info = self.env.step(action)
+
+                next_observation = self._discretState(next_observation)
+
+                self.qStates[qState] += self.lr * (reward+self.gamma*self._greedy(next_observation)-self.qStates[qState])
+                    
+                
+                observation = next_observation
+                done = terminated or truncated
+                
+                if max_frames and (frame > max_frames):
+                    done = True
+                cur_reward += reward
+
+                if self.render and not (e % render_every):
+                    if self.rendergif:
+                        frames.append(self.env.render())
+                    else:
+                        self.env.render()
+
+
+            self.qStates[qState] += self.lr * (reward - self.qStates[qState])
+            self.eps = self._decayEpsilon(self.eps,self.epsilon_decay)
+            log_rewards.append(cur_reward)
+                
+
+
+            if self.rendergif and not (e % render_every):
+                self.saveFramesToGif(
+                    frames,
+                    self.train_path,
+                    f"Train{self.name}Episodes{e}Reward={cur_reward:.2f}.gif",
+                )
+            if not (e % save_every):
+                model_path = os.path.join(
+                    self.train_path,
+                    f"train{self.name}Episode={e}Reward={cur_reward:.2f}.pth",
+                )
+                self.save(model_path)
+                print((f"Model saved to {model_path}"))
+            print(f"Train{self.name}\tEpisode={e}\tReward={cur_reward:.2f}")
+            log_rewards.append(cur_reward)
+        fig,ax = plt.subplots()
+        ax.set_title(f"Reward results of training {self.name} for {episode} episodes")
+        ax.set_xlabel("Episodes")
+        ax.set_ylabel(f"Reward(mean last 10 episodes={np.mean(np.ndarray(log_rewards[-10:])):.2f})")
+        ax.plot(log_rewards)
+        plt.savefig(os.path.join(self.train_path, "rewardlogs.png"))
+        print(f"reward logs saved to {os.path.join(self.train_path,'rewardlogs.png')}")
+
+    def test(self, model="", episode=12, render_every=4, max_frames=0):
+        """
+        Learn the environment by agent
+        Parameters:
+        -----------
+        model: str
+            path to the saved model
+        epsilon: float
+            epsilon value for epsilon-greedy exploration
+        episode: int
+            number of episodes
+        render_every: int
+            render the environment every @param render_every episodes
+        max_frames: int
+            maximum number of frames to train the agent in each episode
+        """
+        if episode <= 10 or render_every <= 0:
+            raise ValueError("render_every and episode must be postive integers >=10")
+        if render_every > episode:
+            raise ValueError("render_every must be less than episodes")
+        if model:
+            self.reset()
+            with open(model,'r') as f:
+                self.qStates,self.eps = json.loads(f.read())
+                self.qStates = defaultdict(str,self.qStates)
+                f.close()
+        log_rewards = []
+        for e in range(1,episode+1):
+            observation, info = self.env.reset(seed=self.seed)
+            observation = self._discretState(observation)
+
+            cur_reward = 0
+            done = False
+            frames = []
+            frame = 0
+
+            while not done:
+                frame += 1
+
+                action = self.choose_action(observation)
+                qState = str([observation,action])
+
+                next_observation, reward, terminated, truncated, info = self.env.step(action)
+
+                next_observation = self._discretState(next_observation)
+
+                # self.qStates[qState] += self.lr * (reward+self.gamma*self._greedy(next_observation)-self.qStates[qState])
+                    
+                
+                observation = next_observation
+                done = terminated or truncated
+                
+                if max_frames and (frame > max_frames):
+                    done = True
+                cur_reward += reward
+
+                if self.render and not (e % render_every):
+                    if self.rendergif:
+                        frames.append(self.env.render())
+                    else:
+                        self.env.render()
+
+
+            # self.qStates[qState] += self.lr * (reward - self.qStates[qState])
+            # self.eps = self._decayEpsilon(self.eps,self.epsilon_decay)
+            log_rewards.append(cur_reward)
+                
+
+
+            print(f"Test{self.name}\tEpisode={e}\tReward={cur_reward:.2f}")
+            if self.rendergif and not (e % render_every):
+                self.saveFramesToGif(
+                    frames,
+                    self.test_path,
+                    f"Test{self.name}Episodes{e}Reward={cur_reward:.2f}.gif",
+                )
+            log_rewards.append(cur_reward)
+        fig,ax = plt.subplots()
+        ax.set_title(f"Reward results of testing {self.name} for {episode} episodes")
+        ax.set_xlabel("Episodes")
+        ax.set_ylabel(f"Reward(mean last 10 episodes={np.mean(np.array(log_rewards[-10:])):.2f})")
+        ax.plot(log_rewards)
+        plt.savefig(os.path.join(self.train_path, "rewardlogs.png"))
+        print(f"reward logs saved to {os.path.join(self.test_path,'rewardlogs.png')}")
+
+
+
+
+    def _discretState(self,state):
+        """
+        Discretize the state of the environment
+        Parameters:
+        -----------
+        state: ndarray
+            state of the environment"""
+        return (min(2, max(-2, int((state[0]) / 0.05))), \
+                            min(2, max(-2, int((state[1]) / 0.1))), \
+                            min(2, max(-2, int((state[2]) / 0.1))), \
+                            min(2, max(-2, int((state[3]) / 0.1))), \
+                            min(2, max(-2, int((state[4]) / 0.1))), \
+                            min(2, max(-2, int((state[5]) / 0.1))), \
+                            int(state[6]), \
+                            int(state[7]))
+
+    def _greedy(self,observation):
+        """
+        Greedy policy for finding maximum reward in our Q table
+        Parameters:
+        -----------
+        observation: ndarray
+            next state of the environment
+        """
+        return np.max([ self.qStates[str([observation,action])] for action in \
+            np.arange(self.env.action_space.start,self.env.action_space.n)])
+            
+    def choose_action(self,observation):
+        """
+        Choose an action based on epsilon-greedy policy
+        Parameters:
+        -----------
+        observation: ndarray
+            next state of the environment
+        eps: float
+            epsilon value
+        """
+        prob = np.random.random()
+        if prob < self.eps:
+            return random.choice(np.arange(self.env.action_space.start,self.env.action_space.n))
+        else:
+            return np.argmax([ self.qStates[str([observation,action])] for action in \
+            np.arange(self.env.action_space.start,self.env.action_space.n)])
+
+    def save(self, path):
+        """
+        Parameters:
+        -----------
+        path: str
+            path to save the model"""
+        with open(path, 'w+') as f:
+            f.write(json.dumps([self.qStates,self.eps]))
+            f.close()
+
+        
+    def reset(self):
+        self.qStates=defaultdict(float)
+        self.eps = 1.0

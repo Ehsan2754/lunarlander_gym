@@ -28,17 +28,26 @@ def main():
         raise ValueError(f"input value {args.method} is an invalud method")
     if args.method == 0:
         agent = RandomAgent(rendergif=True)
+        print(agent)
         agent.test()
     elif args.method == 1:
         raise NotImplemented(f'Method {args.method} is not supported')
     elif args.method == 2:
-        raise NotImplemented(f'Method {args.method} is not supported')
+        agent = QLearningAget(render=False)
+        # print(agent)
+        # agent.train(episode=3000,save_every=250)
+        # agent = QLearningAget(rendergif=True)
+        print(agent)
+        agent.test(model='./output/QLearningAget/train_outputs/trainQLearningAgetEpisode=3000Reward=184.91.pth')
+
+  
     elif args.method == 3:
         # agent = ActorCriticAgent(render=False)
         # print(agent)
-        # agent.train(episode=2000)
+        # agent.train(episode=3000,save_every=250)
         agent = ActorCriticAgent(rendergif=True)
-        agent.test(model='./output/ActorCriticAgent/train_outputs/trainActorCriticAgentEpisode=2000Reward=267857.73.pth')
+        print(agent)
+        agent.test(model='./output/ActorCriticAgent/train_outputs/trainActorCriticAgentEpisode=3000Reward=284.60.pth')
 
         
     return 0
