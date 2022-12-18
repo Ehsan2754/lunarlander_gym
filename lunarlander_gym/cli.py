@@ -33,12 +33,12 @@ def main():
         print(agent)
         agent.test()
     elif args.method == 1:
-        agent = VanillaPolicyGradientAgent(render=False)
-        print(agent)
-        agent.train(episode=10_000,save_every=1000)
-        # agent = ActorCriticAgent(rendergif=True)
+        # agent = VanillaPolicyGradientAgent(render=False)
         # print(agent)
-        # agent.test(model='./output/ActorCriticAgent/train_outputs/trainActorCriticAgentEpisode=3000Reward=284.60.pth')
+        # agent.train(episode=10_000,save_every=1000)
+        agent = VanillaPolicyGradientAgent(rendergif=True)
+        print(agent)
+        agent.test(model='./output/VanillaPolicyGradientAgent/train_outputs/trainVanillaPolicyGradientAgentEpisode=10000Reward=49.10.pth')
     elif args.method == 2:
         # agent = QLearningAget(render=False)
         # print(agent)

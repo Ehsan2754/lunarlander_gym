@@ -873,11 +873,16 @@ class VanillaPolicyGradientAgent(BaseAgent):
             self.policy = PolicyGradientModule()
             self.policy.load_state_dict(torch.load(os.path.join(model)))
 
-        observation, info = self.env.reset(seed=self.seed)
+        
+        self.reset()
+        steps = 0
+        log_states = []
+        log_actions = []
         log_rewards = []
         for e in range(1, episode + 1):
             cur_reward = 0
             observation, info = self.env.reset(seed=self.seed)
+            observation = Variable(torch.from_numpy(observation).float())
             done = False
             frames = []
             frame = 0
@@ -885,26 +890,55 @@ class VanillaPolicyGradientAgent(BaseAgent):
                 frame += 1
 
                 action = self.choose_action(observation)
-                observation, reward, terminated, truncated, info = self.env.step(action)
-                self.policy.rewards.append(reward)
-                cur_reward += reward
+                next_observation, reward, terminated, truncated, info = self.env.step(action)
 
                 done = terminated or truncated
                 if max_frames and (frame > max_frames):
                     done = True
+                reward = 0 if done else reward
+                cur_reward += reward
                 if self.render and not (e % render_every):
                     if self.rendergif:
                         frames.append(self.env.render())
                     else:
                         self.env.render()
+                log_states.append(observation)
+                log_actions.append(float(action))
+                log_rewards.append(reward)
+                observation = Variable(torch.from_numpy(next_observation).float())
+                steps+=1
+
+                if not (episode%self.batch):
+                    r = 0
+                    for i in reversed(range(steps)):
+                        if not log_rewards[i]:
+                            r = r*self.gamma + log_rewards[i]
+                    norm_rewards = np.array(log_rewards)
+                    norm_rewards = (norm_rewards - np.mean(norm_rewards))/np.std(norm_rewards)
+
+                    self.optimizer.zero_grad()
+
+                    for i in range(steps):
+                        observation = log_states[i]
+                        action = Variable(torch.FloatTensor(log_actions[i]))
+                        reward = norm_rewards[i]
+                        probabilities = self.policy(observation)
+                        c = Categorical(probabilities)
+                        # loss = -c.log_prob(action)*reward
+                        # loss.backward()
+                    # self.optimizer.step()
+                    log_actions.clear()
+                    log_rewards.clear()
+                    log_states.clear()
+                    
             if self.rendergif and not (e % render_every):
                 self.saveFramesToGif(
                     frames,
                     self.test_path,
                     f"Test{self.name}Episodes{e}Reward={cur_reward:.2f}.gif",
                 )
-            log_rewards.append(cur_reward)
             print(f"Test{self.name}\tEpisode={e}\tReward={cur_reward:.2f}")
+            log_rewards.append(cur_reward)
         fig, ax = plt.subplots()
         ax.set_title(f"Reward results of testing {self.name} for {episode} episodes")
         ax.set_xlabel("Episodes")
@@ -912,6 +946,5 @@ class VanillaPolicyGradientAgent(BaseAgent):
             f"Reward(mean last 10 episodes={np.mean(np.array(log_rewards[-10:])):.2f})"
         )
         ax.plot(log_rewards)
-        plt.savefig(os.path.join(self.train_path, "rewardlogs.png"))
-        print(f"reward logs saved to {os.path.join(self.train_path,'rewardlogs.png')}")
-
+        plt.savefig(os.path.join(self.test_path, "rewardlogs.png"))
+        print(f"reward logs saved to {os.path.join(self.test_path,'rewardlogs.png')}")
