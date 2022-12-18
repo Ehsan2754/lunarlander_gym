@@ -4,7 +4,7 @@ import sys
 import gymnasium as gym
 import numpy as np
 import logging
-from agents import BaseAgent
+from agents import *
 def main():
     """Console script for lunarlander_gym."""
     parser = argparse.ArgumentParser()
@@ -38,14 +38,9 @@ def main():
     elif args.method == 2:
         raise NotImplemented(f'Method {args.method} is not supported')
     elif args.method == 3:
-        raise NotImplemented(f'Method {args.method} is not supported')
-    for _ in range(1000):
-        action = policy(observation)  # User-defined policy function
-        observation, reward, terminated, truncated, info = env.step(action)
+        agent = ActorCriticAgent()
+        agent.train(1000,100,100)
 
-        if terminated or truncated:
-            observation, info = env.reset()
-    env.close()
         
     return 0
 
