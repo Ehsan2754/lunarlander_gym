@@ -13,8 +13,8 @@ import torch.optim as optim
 from torch.autograd import Variable
 import numpy as np
 import random
-# from lunarlander_gym.models import *
-from models import *
+from lunarlander_gym.models import *
+# from models import *
 import logging
 
 

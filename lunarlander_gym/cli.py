@@ -4,8 +4,8 @@ import sys
 import gymnasium as gym
 import numpy as np
 import logging
-# from lunarlander_gym.agents import *
-from agents import *
+from lunarlander_gym.agents import *
+# from agents import *
 
 def main():
     """Console script for lunarlander_gym."""
