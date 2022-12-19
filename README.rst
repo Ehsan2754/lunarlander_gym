@@ -86,9 +86,9 @@ The sources for lunarlander_gym can be downloaded from the
 .. |image7| image:: output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif
 .. |image8| image:: output/RandomAgent/test_outputs/TestRandomAgentEpisodes8Reward=-69.36.gif
 .. |image9| image:: output/VanillaPolicyGradientAgent/test_outputs/TestVanillaPolicyGradientAgentEpisodes4Reward=49.07.gif
-.. |image10| image:: output/QLearningAget/test_outputs/TestQLearningAgetEpisodes8Reward=198.51.gif
-.. |image11| image:: output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif
-.. |image12| image:: output/RandomAgent/test_outputs/TestRandomAgentEpisodes8Reward=-69.36.gif
-.. |image13| image:: output/VanillaPolicyGradientAgent/test_outputs/TestVanillaPolicyGradientAgentEpisodes4Reward=49.07.gif
-.. |image14| image:: output/QLearningAget/test_outputs/TestQLearningAgetEpisodes8Reward=198.51.gif
-.. |image15| image:: output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif
+.. |image10| image:: https://github.com/Ehsan2754/lunarlander_gym/blob/2d363ee2506ce47e22b6216e2091882e0ad7e172/output/QLearningAget/test_outputs/TestQLearningAgetEpisodes8Reward=198.51.gif
+.. |image11| image:: https://github.com/Ehsan2754/lunarlander_gym/blob/2d363ee2506ce47e22b6216e2091882e0ad7e172/output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif
+.. |image12| image:: https://github.com/Ehsan2754/lunarlander_gym/blob/2d363ee2506ce47e22b6216e2091882e0ad7e172/output/RandomAgent/test_outputs/TestRandomAgentEpisodes8Reward=-69.36.gif
+.. |image13| image:: https://github.com/Ehsan2754/lunarlander_gym/blob/2d363ee2506ce47e22b6216e2091882e0ad7e172/output/VanillaPolicyGradientAgent/test_outputs/TestVanillaPolicyGradientAgentEpisodes4Reward=49.07.gif
+.. |image14| image:: https://github.com/Ehsan2754/lunarlander_gym/blob/2d363ee2506ce47e22b6216e2091882e0ad7e172/output/QLearningAget/test_outputs/TestQLearningAgetEpisodes8Reward=198.51.gif
+.. |image15| image:: https://github.com/Ehsan2754/lunarlander_gym/blob/2d363ee2506ce47e22b6216e2091882e0ad7e172/output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif
