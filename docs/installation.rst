@@ -6,7 +6,7 @@ Installation
 
 
 Stable release [Not Available]
---------------
+-------------------------------
 
 .. To install lunarlander_gym, run this command in your terminal:
 

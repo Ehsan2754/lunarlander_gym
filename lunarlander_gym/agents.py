@@ -36,10 +36,8 @@ class BaseAgent:
         render: boolean, whether to render the environment or not
         rendergif: boolean, whether to render the environment result in a gif file
         path: string, path to save the results
-        name: str
-            name of the agent
-        seed: int
-            random seed
+        name: str,name of the agent
+        seed: int,random seed
         """
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.name = name
@@ -86,8 +84,7 @@ class BaseAgent:
         Step the agent
         Parameters:
         -----------
-        observation: np.array
-            action to take
+        observation: np.array, action to take
         """
         raise NotImplementedError
 
@@ -103,10 +100,8 @@ class BaseAgent:
 
         Parameters:
         -----------
-        model: str
-            path to saved model "
-        gif: str|bool
-            save the output model as gif to the given path, if None, it will be as humanmode.
+        model: str,path to saved model 
+        gif: str|bool,save the output model as gif to the given path, if None, it will be as humanmode.
         """
         raise NotImplementedError
 
@@ -117,7 +112,7 @@ class BaseAgent:
         Parameters:
         -----------
         path: str
-            path to save the agent"""
+        path to save the agent"""
         raise NotImplementedError
 
     def saveFramesToGif(self, frames, path="./", filename="result.gif"):
@@ -163,14 +158,10 @@ class RandomAgent(BaseAgent):
         """
         Parameters:
         -----------
-        model: str
-            path to saved model, empty string tests the current model on the agent"
-        episode: int
-            number of episodes
-        max_frames: int
-            maximum number of frames to test the agent in each episode
-        render_every: int
-            render the environment every @param render_every episodes"""
+        model: str,path to saved model, empty string tests the current model on the agent"
+        episode: int,number of episodes
+        max_frames: int,maximum number of frames to test the agent in each episode
+        render_every: int,render the environment every @param render_every episodes"""
         if episode <= 10 or render_every <= 0:
             raise ValueError("render_every and episode must be postive integers >=10")
         if render_every > episode:
@@ -247,16 +238,11 @@ class QLearningAget(BaseAgent):
         Learn the environment by agent
         Parameters:
         -----------
-        epsilon: float
-            epsilon value for epsilon-greedy exploration
-        episode: int
-            number of episodes
-        save_every: bool |int
-            saves the model weights every @param save_every episodes
-        render_every: int
-            render the environment every @param render_every episodes
-        max_frames: int
-            maximum number of frames to train the agent in each episode
+        epsilon: float,epsilon value for epsilon-greedy exploration
+        episode: int,number of episodes
+        save_every: bool |int,saves the model weights every @param save_every episodes
+        render_every: int,render the environment every @param render_every episodes
+        max_frames: int,maximum number of frames to train the agent in each episode
         """
         if episode <= 10 or render_every <= 0:
             raise ValueError("render_every and episode must be postive integers >=10")
@@ -339,16 +325,11 @@ class QLearningAget(BaseAgent):
         Learn the environment by agent
         Parameters:
         -----------
-        model: str
-            path to the saved model
-        epsilon: float
-            epsilon value for epsilon-greedy exploration
-        episode: int
-            number of episodes
-        render_every: int
-            render the environment every @param render_every episodes
-        max_frames: int
-            maximum number of frames to train the agent in each episode
+        model: str,path to the saved model
+        epsilon: float,epsilon value for epsilon-greedy exploration
+        episode: int,number of episodes
+        render_every: int,render the environment every @param render_every episodes
+        max_frames: int,maximum number of frames to train the agent in each episode
         """
         if episode <= 10 or render_every <= 0:
             raise ValueError("render_every and episode must be postive integers >=10")
@@ -424,8 +405,7 @@ class QLearningAget(BaseAgent):
         Discretize the state of the environment
         Parameters:
         -----------
-        state: ndarray
-            state of the environment"""
+        state: ndarray,state of the environment"""
         return (
             min(2, max(-2, int((state[0]) / 0.05))),
             min(2, max(-2, int((state[1]) / 0.1))),
@@ -442,8 +422,7 @@ class QLearningAget(BaseAgent):
         Greedy policy for finding maximum reward in our Q table
         Parameters:
         -----------
-        observation: ndarray
-            next state of the environment
+        observation: ndarray,next state of the environment
         """
         return np.max(
             [
@@ -459,10 +438,8 @@ class QLearningAget(BaseAgent):
         Choose an action based on epsilon-greedy policy
         Parameters:
         -----------
-        observation: ndarray
-            next state of the environment
-        eps: float
-            epsilon value
+        observation: ndarray,next state of the environment
+        eps: float,epsilon value
         """
         prob = np.random.random()
         if prob < self.eps:
@@ -483,8 +460,7 @@ class QLearningAget(BaseAgent):
         """
         Parameters:
         -----------
-        path: str
-            path to save the model"""
+        path: str,path to save the model"""
         with open(path, "w+") as f:
             f.write(json.dumps([self.qStates, self.eps]))
             f.close()
@@ -537,8 +513,7 @@ class ActorCriticAgent(BaseAgent):
         Step the agent
         Parameters:
         -----------
-        observation: np.array of shape (n_samples,...)
-            state vector of the environment
+        observation: np.array of shape (n_samples,...),state vector of the environment
         """
         return self.policy(observation)
 
@@ -547,14 +522,10 @@ class ActorCriticAgent(BaseAgent):
         Learn the environment by agent
         Parameters:
         -----------
-        episode: int
-            number of episodes
-        save_every: bool |int
-            saves the model weights every @param save_every episodes
-        render_every: int
-            render the environment every @param render_every episodes
-        max_frames: int
-            maximum number of frames to train the agent in each episode
+        episode: int,number of episodes
+        save_every: bool |int,saves the model weights every @param save_every episodes
+        render_every: int,render the environment every @param render_every episodes
+        max_frames: int,maximum number of frames to train the agent in each episode
         """
         if episode <= 10 or render_every <= 0:
             raise ValueError("render_every and episode must be postive integers >=10")
@@ -622,8 +593,7 @@ class ActorCriticAgent(BaseAgent):
 
         Parameters:
         -----------
-        path: str
-            path to save the agent"""
+        path: str,path to save the agent"""
         torch.save(self.policy.state_dict(), path)
 
     def test(self, model="", episode=12, max_frames=0, render_every=4):
@@ -632,14 +602,10 @@ class ActorCriticAgent(BaseAgent):
 
         Parameters:
         -----------
-        model: str
-            path to saved model, empty string tests the current model on the agent"
-        episode: int
-            number of episodes
-        max_frames: int
-            maximum number of frames to test the agent in each episode
-        render_every: int
-            render the environment every @param render_every episodes
+        model: str,path to saved model, empty string tests the current model on the agent"
+        episode: int,number of episodes
+        max_frames: int,maximum number of frames to test the agent in each episode
+        render_every: int,render the environment every @param render_every episodes
 
         """
         if model:
@@ -733,8 +699,7 @@ class VanillaPolicyGradientAgent(BaseAgent):
         Step the agent
         Parameters:
         -----------
-        observation: np.array of shape (n_samples,...)
-            state vector of the environment
+        observation: np.array of shape (n_samples,...),state vector of the environment
         """
         probability = self.policy(observation)
         c = Categorical(probability) 
@@ -746,14 +711,10 @@ class VanillaPolicyGradientAgent(BaseAgent):
         Learn the environment by agent
         Parameters:
         -----------
-        episode: int
-            number of episodes
-        save_every: bool |int
-            saves the model weights every @param save_every episodes
-        render_every: int
-            render the environment every @param render_every episodes
-        max_frames: int
-            maximum number of frames to train the agent in each episode
+        episode: int,number of episodes
+        save_every: bool |int,saves the model weights every @param save_every episodes
+        render_every: int,render the environment every @param render_every episodes
+        max_frames: int,maximum number of frames to train the agent in each episode
         """
         if episode <= 10 or render_every <= 0:
             raise ValueError("render_every and episode must be postive integers >=10")
@@ -848,8 +809,7 @@ class VanillaPolicyGradientAgent(BaseAgent):
 
         Parameters:
         -----------
-        path: str
-            path to save the agent"""
+        path: str,path to save the agent"""
         torch.save(self.policy.state_dict(), path)
 
     def test(self, model="", episode=12, max_frames=0, render_every=4):
@@ -858,14 +818,10 @@ class VanillaPolicyGradientAgent(BaseAgent):
 
         Parameters:
         -----------
-        model: str
-            path to saved model, empty string tests the current model on the agent"
-        episode: int
-            number of episodes
-        max_frames: int
-            maximum number of frames to test the agent in each episode
-        render_every: int
-            render the environment every @param render_every episodes
+        model: str,path to saved model, empty string tests the current model on the agent"
+        episode: int,number of episodes
+        max_frames: int,maximum number of frames to test the agent in each episode
+        render_every: int,render the environment every @param render_every episodes
 
         """
         if model:
@@ -948,3 +904,4 @@ class VanillaPolicyGradientAgent(BaseAgent):
         ax.plot(log_rewards)
         plt.savefig(os.path.join(self.test_path, "rewardlogs.png"))
         print(f"reward logs saved to {os.path.join(self.test_path,'rewardlogs.png')}")
+
