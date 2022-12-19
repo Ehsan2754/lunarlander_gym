@@ -47,8 +47,8 @@ The sources for lunarlander_gym can be downloaded from the `Github repo`_.
     ```
         $ sudo apt update && sudo apt upgrade
         $ sudo apt install make
-        $ pip install requirements_dev.txt
-        $ make install
+        $ pip install -r requirements_dev.txt
+        $ sudo make install
 
     ```
 - Now you can just immidiately use it:
