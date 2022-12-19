@@ -15,9 +15,9 @@ def main():
         "--method",
         help="""Specifies the Reinforcement Agent method {
         0 -> Random,
-        1 -> Gradient based optimization,
-        2 -> Q-Learning Agent
-        3 -> Actor-critic
+        1 -> Gradient Policy Agent,
+        2 -> Q-Learning Agent,
+        3 -> Actor-critic Agent
         }""",
         type=int,
         metavar='M',
