@@ -31,8 +31,8 @@ Demo
 +-------------+-------------+-------------+-------------+-------------+
 | Reward      | -70.46      | 49.07       | 198.51      | 284.86      |
 +-------------+-------------+-------------+-------------+-------------+
-| Output      | `link <     | `link <outp | `link <ou   | `           |
-| Models      | output/Rand | ut/VanillaP | tput/QLearn | link <outpu |
+| Output      | `link < ou  | `link <outp | `link <ou   | `link <ou   |
+| Models      |   tput/Rand | ut/VanillaP | tput/QLearn |       tpu   |
 |             | omAgent>`__ | olicyGradie | ingAget>`__ | t/ActorCrit |
 |             |             | ntAgent>`__ |             | icAgent>`__ |
 +-------------+-------------+-------------+-------------+-------------+
