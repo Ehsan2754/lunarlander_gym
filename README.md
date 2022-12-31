@@ -4,31 +4,29 @@
 ![https://travis-ci.com/ehsan2754/lunarlander_gym](https://img.shields.io/travis/ehsan2754/lunarlander_gym.svg)
 ![https://lunarlander-gym.readthedocs.io/en/latest/?version=latest](https://readthedocs.org/projects/lunarlander-gym/badge/?version=latest)
 ![https://pyup.io/repos/github/ehsan2754/lunarlander_gym/](https://pyup.io/repos/github/ehsan2754/lunarlander_gym/shield.svg)
-
 ## Summary
 This project is implementation of multiple AI agents based on different Reinforcement Learning methods  to OpenAI Gymnasium Lunar-Lander environment which is classic rocket landing trajectory optimization problem.
 
-
-
-
-
-
-
-* Free software: MIT license
 * Documentation: https://lunarlander-gym.readthedocs.io.
 
-# Demo
-|                   | RandomAgent | Gradient Policy Agent | Q-Learning Agent | Actor-critic Agent |
-| ----------------- | ----------- | --------------------- | ---------------- | ------------------ |
-| Training episodes | 0           | 10,000                | 3000             | 3000               |
-| Reward            | -70.46      | 49.07                 | 198.51           | 284.86             |
-|Output Models|[link](output/RandomAgent)|[link](output/VanillaPolicyGradientAgent)|[link](output/QLearningAget)|[link](output/ActorCriticAgent)|
-|Demo| ![](output/RandomAgent/test_outputs/TestRandomAgentEpisodes8Reward=-69.36.gif) | ![](output/VanillaPolicyGradientAgent/test_outputs/TestVanillaPolicyGradientAgentEpisodes4Reward=49.07.gif) | ![](output/QLearningAget/test_outputs/TestQLearningAgetEpisodes8Reward=198.51.gif) | ![](output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif) |
+## Demo
+
+|                   |  Q-Learning Agent  | Actor-critic Agent |
+| ----------------- | ------------------ | ------------------ |
+| Training episodes |3000                | 3000               |
+| Reward            |198.51              | 284.86             |
+| Output Models     |[link](output/QLearningAget)|[link](output/ActorCriticAgent)|
+|Demo| ![](output/QLearningAget/test_outputs/TestQLearningAgetEpisodes8Reward=198.51.gif) | ![](output/ActorCriticAgent/test_outputs/TestActorCriticAgentEpisodes12Reward=284.86.gif) |
+
+|                   | RandomAgent | Gradient Policy Agent |
+| ----------------- | ----------- | --------------------- | 
+| Training episodes | 0           | 10,000                | 
+| Reward            | -70.46      | 49.07                 | 
+|Output Models|[link](output/RandomAgent)|[link](output/VanillaPolicyGradientAgent)|
+|Demo| ![](output/RandomAgent/test_outputs/TestRandomAgentEpisodes8Reward=-69.36.gif) | ![](output/VanillaPolicyGradientAgent/test_outputs/TestVanillaPolicyGradientAgentEpisodes4Reward=49.07.gif) | 
+
 
 ## Installation
-
-
-
 
 ### From sources
 
